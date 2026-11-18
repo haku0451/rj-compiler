@@ -1,0 +1,9 @@
+package com.github.haku0451.demo
+
+// 継承: class Dog(Animal)
+class Dog(Animal) {
+
+    def speak() {
+        print("woof")
+    }
+}

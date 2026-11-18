@@ -1,0 +1,121 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  release:
+    types:
+      - published
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-rjc:
+    name: Build rjc (${{ matrix.platform }})
+    runs-on: ${{ matrix.runner }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            platform: linux-x86_64
+            binary: target/release/rjc
+
+          - runner: windows-latest
+            platform: windows-x86_64
+            binary: target/release/rjc.exe
+
+          - runner: macos-latest
+            platform: macos-aarch64
+            binary: target/release/rjc
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build rjc
+        run: cargo build --release
+
+      - name: Upload rjc binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: rjc-${{ matrix.platform }}
+          path: ${{ matrix.binary }}
+
+  publish-gradle-plugin:
+    name: Publish Gradle Plugin
+    needs: build-rjc
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Download rjc binaries
+        uses: actions/download-artifact@v8
+        with:
+          path: rjc-artifacts
+
+      - name: Stage bundled rjc binaries
+        shell: bash
+        run: |
+          install -D rjc-artifacts/rjc-linux-x86_64/rjc \
+            gradle-plugin/src/main/resources/rjc/linux-x86_64/rjc
+
+          install -D rjc-artifacts/rjc-windows-x86_64/rjc.exe \
+            gradle-plugin/src/main/resources/rjc/windows-x86_64/rjc.exe
+
+          install -D rjc-artifacts/rjc-macos-aarch64/rjc \
+            gradle-plugin/src/main/resources/rjc/macos-aarch64/rjc
+
+          chmod +x gradle-plugin/src/main/resources/rjc/linux-x86_64/rjc
+          chmod +x gradle-plugin/src/main/resources/rjc/macos-aarch64/rjc
+
+      - name: Set up JDK
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: "9.4.1"
+
+      - name: Resolve version
+        id: version
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+          else
+            BASE_VERSION=$(grep -m1 '^version' Cargo.toml | sed -E 's/version = "([^"]+)".*/\1/')
+            COMMIT_SHA=$(git rev-parse --short=12 HEAD)
+            VERSION="${BASE_VERSION}-${COMMIT_SHA}"
+          fi
+
+          if [ -z "$VERSION" ]; then
+            echo "Could not resolve publish version" >&2
+            exit 1
+          fi
+
+          echo "Publishing version: $VERSION"
+          echo "value=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Publish to GitHub Packages
+        working-directory: gradle-plugin
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+        run: |
+          gradle clean assemble validatePlugins publish \
+            -Pversion="${{ steps.version.outputs.value }}" \
+            -Pgithub.repository="${{ github.repository }}"
+

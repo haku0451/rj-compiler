@@ -1,0 +1,17 @@
+package com.github.haku0451.demo
+
+// static メンバー + メソッドオーバーロード
+class Math {
+
+    static def add(a: int, b: int) -> int {
+        a + b
+    }
+
+    static def print(value: str) {
+        print(value)
+    }
+
+    static def print(value: int) {
+        print(value)
+    }
+}

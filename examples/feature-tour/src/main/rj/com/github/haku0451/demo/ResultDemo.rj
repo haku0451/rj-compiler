@@ -1,0 +1,14 @@
+package com.github.haku0451.demo
+
+// Result 型と ? 演算子
+class ResultDemo {
+
+    static def readConfig() -> Result<str, str> {
+        Result.ok("config")
+    }
+
+    static def run() -> str {
+        let text = readConfig()?
+        text
+    }
+}

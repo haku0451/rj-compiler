@@ -1,0 +1,24 @@
+package com.github.haku0451.demo
+
+// 制御フロー: loop / while / for
+class ControlFlow {
+
+    static def demoLoops() {
+        var n = 0
+        loop {
+            print(n)
+            n = n + 1
+            if n >= 2 {
+                break
+            }
+        }
+
+        while 1 == 0 {
+            print(1)
+        }
+
+        for item in range(3) {
+            print(item)
+        }
+    }
+}

@@ -1,0 +1,14 @@
+package com.github.haku0451.demo
+
+// ラムダ式・リスト内包
+class Functional {
+
+    static def apply(n: int) -> int {
+        return n * n
+    }
+
+    static def showEvens() {
+        let evens = [i for i in range(10) if i % 2 == 0]
+        print(evens)
+    }
+}

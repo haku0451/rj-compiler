@@ -1,0 +1,6 @@
+package com.github.haku0451
+
+def main() {
+    let x = 1 + 2
+    print(x)
+}

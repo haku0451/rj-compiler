@@ -1,0 +1,8 @@
+package com.github.haku0451.demo
+
+class ConsoleGreeter(Greeter) {
+
+    def greet() {
+        print("Hello from Greeter interface")
+    }
+}

@@ -1,0 +1,7 @@
+package com.github.haku0451.demo
+
+// interface
+interface Greeter {
+
+    def greet()
+}

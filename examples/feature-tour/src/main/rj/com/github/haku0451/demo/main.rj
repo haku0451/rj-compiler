@@ -1,0 +1,95 @@
+package com.github.haku0451.demo
+
+// RJ = Python構文 + 式指向 + JVM
+import java.time.LocalDateTime as JvmDateTime
+
+def main() {
+    print("=== RJ Feature Tour ===")
+
+    // 変数と型推論 (let / var)
+    let name = "haku0451"
+    var counter = 0
+    print(name)
+
+    // 式指向: ブロックの最後の式が値になる
+    let sum = {
+        let a = 10
+        let b = 32
+        a + b
+    }
+    print(sum)
+
+    // if 式
+    let score = 75
+    let result = if score >= 60 {
+        "Pass"
+    } else {
+        "Fail"
+    }
+    print(result)
+
+    // 文字列連結: "私の名前は" . name . "です"
+    print("私の名前は" . name . "です")
+
+    // for ループ + range (Python風)
+    for i in range(3) {
+        print(i)
+    }
+
+    // リスト内包表記
+    let squares = [i * i for i in range(5)]
+    print(squares)
+
+    // while ループ
+    while counter < 2 {
+        print(counter)
+        counter = counter + 1
+    }
+
+    // enum + match 式 (Color.rj)
+    let label = match Color.Red {
+        case Color.Red {
+            "赤"
+        }
+        case Color.Green {
+            "緑"
+        }
+        case _ {
+            "その他"
+        }
+    }
+    print(label)
+
+    // クラス (User.rj)
+    let user = User("haku0451", 20)
+    user.greet()
+
+    // 継承 (Animal.rj / Dog.rj)
+    let dog = Dog()
+    dog.speak()
+
+    // static / オーバーロード (Math.rj)
+    print(Math.add(10, 20))
+    Math.print("str overload")
+    Math.print(42)
+
+    // ラムダ・内包 (Functional.rj)
+    print(Functional.apply(6))
+    Functional.showEvens()
+
+    // Result 型 (ResultDemo.rj)
+    print(ResultDemo.run())
+
+    // async/await (AsyncFetch.rj)
+    print(AsyncFetch.load())
+
+    // ループ集約 (ControlFlow.rj)
+    ControlFlow.demoLoops()
+
+    // interface (Greeter.rj)
+    let greeter = ConsoleGreeter()
+    greeter.greet()
+
+    // Java 相互運用: import + static メソッド呼び出し
+    print(JvmDateTime.now().toString())
+}

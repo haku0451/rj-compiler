@@ -1,0 +1,13 @@
+package com.github.haku0451.demo
+
+// async/await: Python風
+class AsyncFetch {
+
+    static async def fetch() -> str {
+        "data"
+    }
+
+    static def load() -> str {
+        await fetch()
+    }
+}

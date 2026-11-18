@@ -1,0 +1,8 @@
+package com.github.haku0451.demo
+
+// enum: JVM enum として生成
+enum Color {
+    Red
+    Green
+    Blue
+}

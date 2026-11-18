@@ -1,0 +1,5 @@
+package com.github.haku0451
+
+def main() {
+    print("Hello, RJ!")
+}
